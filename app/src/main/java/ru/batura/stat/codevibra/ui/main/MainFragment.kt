@@ -41,15 +41,41 @@ class MainFragment : Fragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
+        // наблюдаем за изменением целого значения
         viewModel.decimalLive.observe(viewLifecycleOwner, Observer {
             edit_binary.text = SpannableStringBuilder(it.toString(2))
         })
 
+        // наблюдаем за изменением бинарного значения
         viewModel.binaryLive.observe(viewLifecycleOwner, Observer {
-//            edit_decimal.text = SpannableStringBuilder(it.toString())
+            edit_decimal.text = SpannableStringBuilder(it.toString())
+        })
+
+        // наблюдаем за изменением фокуса
+        viewModel.focusChanged.observe(viewLifecycleOwner, Observer {
+            changeTextWatchers(it)
         })
         super.onActivityCreated(savedInstanceState)
+    }
+
+    /**
+     *  в зависимости от того на какой editText нажал пользователь
+     *  добавляет слушатель в нажатый и убирает из другого
+     */
+    fun changeTextWatchers(viewId : Int) {
+        when (viewId) {
+            R.id.edit_binary -> {
+                print("binary")
+                edit_binary.addTextChangedListener(viewModel.binaryTextWatch)
+                edit_decimal.removeTextChangedListener(viewModel.decimalTextWatch)
+            }
+
+            R.id.edit_decimal -> {
+                print("decimal")
+                edit_decimal.addTextChangedListener(viewModel.decimalTextWatch)
+                edit_binary.removeTextChangedListener(viewModel.binaryTextWatch)
+            }
+        }
     }
 
 }

@@ -23,7 +23,7 @@ class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
-        model.uptadeLive()
+        model.uptadeDecimLive()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -69,15 +69,15 @@ class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
-        model.uptadeLive()
+        model.uptadeBinarLive()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        try {
-            _number = s.toString().toInt(2)
-        } catch (e:Exception) {
-            Log.d("TextW", " Wrong number")
-        }
+//        try {
+//            _number = s.toString().toInt(2)
+//        } catch (e:Exception) {
+//            Log.d("TextW", " Wrong number")
+//        }
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
