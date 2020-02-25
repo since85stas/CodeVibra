@@ -1,16 +1,24 @@
 package ru.batura.stat.codevibra.ui.main
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.SpannableStringBuilder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.main_fragment.*
 import ru.batura.stat.codevibra.R
+import ru.batura.stat.codevibra.createVibrationPattern
 import ru.batura.stat.codevibra.databinding.MainFragmentBinding
 
 class MainFragment : Fragment() {
@@ -55,6 +63,13 @@ class MainFragment : Fragment() {
         viewModel.focusChanged.observe(viewLifecycleOwner, Observer {
             changeTextWatchers(it)
         })
+
+        // наблюдаем за включением вибрации
+        viewModel.startV.observe(viewLifecycleOwner, Observer {
+            if (it > 0) {
+                createVibrate( it )
+            }
+        })
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -77,5 +92,30 @@ class MainFragment : Fragment() {
             }
         }
     }
+
+
+    fun createVibrate(num : Int) {
+        val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val canVibrate: Boolean = vibrator.hasVibrator()
+        val milliseconds = 1000L
+
+        if (canVibrate) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // API 26
+                vibrator.vibrate(
+                    VibrationEffect.createWaveform(
+                        createVibrationPattern(num),
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
+            } else {
+                // This method was deprecated in API level 26
+                vibrator.vibrate(createVibrationPattern(num),0)
+            }
+        }
+        viewModel.vibrateFinish()
+    }
+
+
 
 }

@@ -25,14 +25,30 @@ class MainViewModel : ViewModel() {
     val focusChanged : LiveData<Int>
         get() = _focusChanged
 
+    private var _startV : MutableLiveData<Int> = MutableLiveData()
+    val startV : LiveData<Int>
+        get() = _startV
+
     init {
         print("init view model")
     }
 
     fun startButtonClicked() {
         print("start clicked")
+        when (focusListner.focus) {
+            R.id.edit_binary -> {
+                _startV.value = binaryLive.value
+            }
+
+            R.id.edit_decimal -> {
+                _startV.value = decimalLive.value
+            }
+        }
     }
 
+    fun vibrateFinish() {
+        _startV.value = -99
+    }
 
     /**
      * изменяет значение целого поля
