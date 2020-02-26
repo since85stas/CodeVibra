@@ -3,11 +3,11 @@ package ru.batura.stat.codevibra
 import java.util.*
 import kotlin.math.pow
 
-fun createVibrationPattern ( num:Int) : LongArray {
+fun createVibrationPattern ( num:Int, tempProgress : Int , longProgress : Int) : LongArray {
 
     // временные величины
-    val xTemp = 0.5
-    val xDl = 0.5
+    val xTemp = tempProgress /100.0
+    val xDl = longProgress /100.0
 
     val TEN : Double = 10.toDouble()
 
@@ -21,7 +21,8 @@ fun createVibrationPattern ( num:Int) : LongArray {
     val strings  = num.toString(2).toCharArray()
 //    val strings  = "1011".toCharArray()
 
-    for (i  in 0..strings.size-1) {
+
+    for (i  in strings.indices) {
         if ( i == 0) {
             if (strings[i] == '0') {
                 longList.add(tPause)

@@ -4,10 +4,8 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.batura.stat.codevibra.BinaryTextWatcher
-import ru.batura.stat.codevibra.DecimalTextWatcher
-import ru.batura.stat.codevibra.FocusListner
-import ru.batura.stat.codevibra.R
+import ru.batura.stat.codevibra.*
+import java.util.*
 
 class MainViewModel : ViewModel() {
 
@@ -19,6 +17,15 @@ class MainViewModel : ViewModel() {
     var decimalLive : MutableLiveData<Int> = MutableLiveData()
     var binaryLive : MutableLiveData<Int> = MutableLiveData()
 
+    // листнеры для отслеживания ползунков
+    var tempListner = TempSeekBarListner(this)
+    var longListner = LongSeekBarListner(this)
+
+    //
+    var seekTempLive : MutableLiveData<Int> = MutableLiveData()
+    var seekLongLive : MutableLiveData<Int> = MutableLiveData()
+
+    // добавляем листнер на Focus
     var focusListner: FocusListner = FocusListner(this)
 
     private var _focusChanged : MutableLiveData<Int> = MutableLiveData()
@@ -69,6 +76,11 @@ class MainViewModel : ViewModel() {
      */
     fun changeFocus(id: Int) {
         _focusChanged.value = id
+    }
+
+    fun updateSeekVal() {
+        seekTempLive.value = tempListner.value
+        seekLongLive.value = longListner.value
     }
 }
 

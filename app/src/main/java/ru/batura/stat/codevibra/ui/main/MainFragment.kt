@@ -67,8 +67,19 @@ class MainFragment : Fragment() {
         // наблюдаем за включением вибрации
         viewModel.startV.observe(viewLifecycleOwner, Observer {
             if (it > 0) {
-                createVibrate( it )
+                createVibrate( it,
+                    viewModel.seekTempLive.value!!,
+                    viewModel.seekLongLive.value!!
+                    )
             }
+        })
+
+        // наблюдаем за ползунками
+        viewModel.seekTempLive.observe(viewLifecycleOwner, Observer {
+            temp_title.text = getTitleString(R.id.temp_title, it)
+        })
+        viewModel.seekLongLive.observe(viewLifecycleOwner, Observer {
+            long_title.text = getTitleString(R.id.long_title, it)
         })
         super.onActivityCreated(savedInstanceState)
     }
@@ -77,7 +88,7 @@ class MainFragment : Fragment() {
      *  в зависимости от того на какой editText нажал пользователь
      *  добавляет слушатель в нажатый и убирает из другого
      */
-    fun changeTextWatchers(viewId : Int) {
+    private fun changeTextWatchers(viewId : Int) {
         when (viewId) {
             R.id.edit_binary -> {
                 print("binary")
@@ -96,14 +107,14 @@ class MainFragment : Fragment() {
     /**
      * запускаем вибрацию с нужой каритной
      */
-    fun createVibrate(num : Int) {
+    private fun createVibrate(num : Int, tempProgress : Int, longProgress : Int) {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
 
         // если вибрация доступна
         if (canVibrate) {
             // создаем рисунок вибрации
-            val pattern = createVibrationPattern(num)
+            val pattern = createVibrationPattern(num, tempProgress,longProgress)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // API 26
@@ -121,6 +132,14 @@ class MainFragment : Fragment() {
         viewModel.vibrateFinish()
     }
 
+    private fun getTitleString (id : Int, progress : Int) : String{
+        when (id) {
 
+            R.id.temp_title -> return "Temp $progress"
+            R.id.long_title -> return "Long $progress"
+
+        }
+        return "Title"
+    }
 
 }

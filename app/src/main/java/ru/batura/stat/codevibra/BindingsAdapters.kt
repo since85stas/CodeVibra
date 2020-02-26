@@ -1,6 +1,7 @@
 package ru.batura.stat.codevibra
 
 import android.widget.EditText
+import android.widget.SeekBar
 import androidx.databinding.BindingAdapter
 import ru.batura.stat.codevibra.ui.main.MainViewModel
 
@@ -31,4 +32,26 @@ fun bindEditTextBinary(editText: EditText, model : MainViewModel) {
 fun bindFocusListner(editText: EditText, model : MainViewModel) {
     print("focus")
     editText.setOnFocusChangeListener(model.focusListner)
+}
+
+/**
+ *   добавляем слушатель на seekbar
+ */
+@BindingAdapter("addSeekListner")
+fun bindSeekListner(seekBar: SeekBar, model : MainViewModel) {
+    print("seek")
+    when (seekBar.id) {
+
+        R.id.temp_seek -> {
+            model.tempListner.value = seekBar.progress
+            model.updateSeekVal()
+            seekBar.setOnSeekBarChangeListener(model.tempListner)
+        }
+
+        R.id.longitude_seek -> {
+            model.longListner.value = seekBar.progress
+            model.updateSeekVal()
+            seekBar.setOnSeekBarChangeListener(model.longListner)
+        }
+    }
 }
