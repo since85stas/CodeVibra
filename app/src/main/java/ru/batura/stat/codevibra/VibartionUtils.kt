@@ -1,30 +1,46 @@
 package ru.batura.stat.codevibra
 
+import java.util.*
 import kotlin.math.pow
 
 fun createVibrationPattern ( num:Int) : LongArray {
-    val pattern = longArrayOf(500, 300, 400, 800)
+
+    // временные величины
     val xTemp = 0.5
     val xDl = 0.5
 
     val TEN : Double = 10.toDouble()
 
-    val tPause : Double = (0.125) * TEN.pow(xTemp)
+    val tPause : Long = ((0.125) * TEN.pow( 4 - xTemp)).toLong()
 
-    val tVibr: Double = tPause * xDl
+    val tVibr: Long = (tPause * xDl).toLong()
 
-    val tAftVibrPause : Double = tPause*(1-xDl)
+    val tAftVibrPause : Long = (tPause*(1-xDl)).toLong()
 
-    val longList : MutableList<Long> = ArrayList<Long> ()
-    val strings  = num.toString(2).split("")
-    for (number in strings) {
-        if (number.equals("0")) {
-            longList.add(tPause.toLong())
-        } else if ( number.equals("1")) {
+    val longList  = LinkedList<Long> ()
+    val strings  = num.toString(2).toCharArray()
+//    val strings  = "1011".toCharArray()
 
+    for (i  in 0..strings.size-1) {
+        if ( i == 0) {
+            if (strings[i] == '0') {
+                longList.add(tPause)
+            } else {
+                longList.add(1)
+                longList.add(tVibr)
+                longList.add(tAftVibrPause)
+            }
         } else {
-            print("wront timing")
+            if ( strings[i] == '0' ) {
+                    val last = longList.last()
+                    val newVal = last + tPause
+                    longList.removeLast()
+                    longList.add(newVal)
+            } else {
+                longList.add(tVibr)
+                longList.add(tAftVibrPause)
+            }
         }
     }
-    return pattern
+    return longList.toLongArray()
 }

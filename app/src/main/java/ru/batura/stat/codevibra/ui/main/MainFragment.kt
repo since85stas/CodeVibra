@@ -93,24 +93,29 @@ class MainFragment : Fragment() {
         }
     }
 
-
+    /**
+     * запускаем вибрацию с нужой каритной
+     */
     fun createVibrate(num : Int) {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
-        val milliseconds = 1000L
 
+        // если вибрация доступна
         if (canVibrate) {
+            // создаем рисунок вибрации
+            val pattern = createVibrationPattern(num)
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // API 26
                 vibrator.vibrate(
                     VibrationEffect.createWaveform(
-                        createVibrationPattern(num),
+                        pattern,
                         VibrationEffect.DEFAULT_AMPLITUDE
                     )
                 )
             } else {
                 // This method was deprecated in API level 26
-                vibrator.vibrate(createVibrationPattern(num),0)
+                vibrator.vibrate(pattern,0)
             }
         }
         viewModel.vibrateFinish()

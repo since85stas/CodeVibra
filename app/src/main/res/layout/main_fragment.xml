@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text="1"
+            android:focusedByDefault="true"
             addEditTextWatcherDec="@{viewModel}"
             addFocusListner="@{viewModel}"
             />
