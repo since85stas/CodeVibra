@@ -36,6 +36,10 @@ class MainViewModel : ViewModel() {
     val startV : LiveData<Int>
         get() = _startV
 
+    private var _stopV : MutableLiveData<Boolean> = MutableLiveData()
+    val stopV : LiveData<Boolean>
+        get() = _stopV
+
     init {
         print("init view model")
     }
@@ -53,8 +57,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * при нажатии на кнопку стоп
+     */
+    fun stopButtonClicked() {
+        _stopV.value = true
+        print("stop clicked")
+    }
+
+    /**
+     * запускается после окончания вибрации
+     */
     fun vibrateFinish() {
         _startV.value = -99
+        _stopV.value = false
     }
 
     /**

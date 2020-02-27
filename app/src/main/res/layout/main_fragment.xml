@@ -112,5 +112,15 @@
             android:onClick="@{ () -> viewModel.startButtonClicked() }"
             android:text="start" />
 
+        <Button
+            android:id="@+id/stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="@{ () -> viewModel.stopButtonClicked() }"
+            android:text="stop"
+            android:visibility="gone"
+            />
+
     </LinearLayout>
 </layout>
