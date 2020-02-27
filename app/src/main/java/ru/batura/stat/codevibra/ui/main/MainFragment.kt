@@ -1,7 +1,8 @@
 package ru.batura.stat.codevibra.ui.main
 
-import android.R.attr.delay
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -26,7 +27,7 @@ import ru.batura.stat.codevibra.databinding.MainFragmentBinding
 import java.util.*
 
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
     /**
      * viewModelJob allows us to cancel all coroutines started by this ViewModel.
@@ -45,6 +46,10 @@ class MainFragment : Fragment() {
      */
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private var soundPool: SoundPool? = null
+
+    private var soundId: Int = 0
+
     companion object {
         fun newInstance() = MainFragment()
     }
@@ -55,6 +60,8 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        createSoundPool()
 
         val bindings : MainFragmentBinding= DataBindingUtil.inflate(
             inflater,
@@ -140,10 +147,14 @@ class MainFragment : Fragment() {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
 
+
+
+        playSound()
+
         // если вибрация доступна
         if (canVibrate) {
             // создаем рисунок вибрации
-            val pattern = createVibrationPattern(num, tempProgress,longProgress)
+            val pattern = createVibrationPattern(num, tempProgress, longProgress)
             val longitude = pattern.sum()
             val timerObj = Timer()
             val timerTaskObj: TimerTask = object : TimerTask() {
@@ -151,7 +162,6 @@ class MainFragment : Fragment() {
                     uiScope.launch {
                         stopVibrating()
                     }
-
                 }
             }
 
@@ -185,6 +195,35 @@ class MainFragment : Fragment() {
         uiScope.launch {
             stopVibrating()
         }
+    }
+
+    /**
+     * создаем саунд пул для звуков
+     */
+    fun createSoundPool() {
+        val attributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+        soundPool = SoundPool.Builder()
+            .setAudioAttributes(attributes)
+            .build()
+
+        soundId = soundPool!!.load(this.context!!,R.raw.drum1,1)
+    }
+
+    override fun onLoadComplete(soundPool: SoundPool?, sampleId: Int, status: Int) {
+        print ("sound loader ID=$sampleId staus=$status")
+    }
+
+    /**
+     *
+     */
+    fun playSound() {
+        soundPool!!.play(
+            soundId, 1f,1f,0,0,1f
+        )
+
     }
 
     /**
