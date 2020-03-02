@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:focusedByDefault="true"
             android:inputType="number"
-            android:text="0" />
+            android:text="1111" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,6 +102,42 @@
                     />
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:text="Sound"/>
+            <CheckBox
+                android:id="@+id/sound_check"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                addCheckListner="@{viewModel}"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:text="Cycling"/>
+            <CheckBox
+                android:id="@+id/cycle_check"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                addCheckListner="@{viewModel}"
+                />
         </LinearLayout>
 
         <Button

@@ -70,6 +70,10 @@ public class ChessClockRx {
         return obs;
     }
 
+    public void stopTimer() {
+        mSubscription.unsubscribe();
+    }
+
     private void logOnCompleted() {
         Log.d(TAG, "The day has come, may my watch end!");
     }

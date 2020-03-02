@@ -1,5 +1,8 @@
 package ru.batura.stat.codevibra
 
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import ru.batura.stat.codevibra.ui.main.MainViewModel
 
@@ -32,5 +35,28 @@ class LongSeekBarListner (val model: MainViewModel): SeekBar.OnSeekBarChangeList
     }
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    }
+}
+
+class CheckListner (val model: MainViewModel) : CompoundButton.OnCheckedChangeListener {
+
+    override fun onCheckedChanged( buttonView: CompoundButton?, isChecked: Boolean) {
+        val id = buttonView!!.id
+        when (id) {
+            R.id.cycle_check -> {
+                if ( isChecked ) {
+                    model.isCycleOn = true
+                } else {
+                    model.isCycleOn = false
+                }
+            }
+            R.id.sound_check -> {
+                if ( isChecked ) {
+                    model.isSoundOn = true
+                } else {
+                    model.isCycleOn = false
+                }
+            }
+        }
     }
 }

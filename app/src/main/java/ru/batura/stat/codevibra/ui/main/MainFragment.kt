@@ -120,7 +120,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
         //
         viewModel.isStartPlay.observe(viewLifecycleOwner, Observer {
-            if (it) {
+            if (it ) {
                 playSound()
             } else {
                 stopSound()

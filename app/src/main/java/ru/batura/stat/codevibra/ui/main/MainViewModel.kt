@@ -45,6 +45,9 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     var longListner = LongSeekBarListner(this)
 
     //
+    var checkListner = CheckListner(this)
+
+    //
     var seekTempLive : MutableLiveData<Int> = MutableLiveData()
     var seekLongLive : MutableLiveData<Int> = MutableLiveData()
 
@@ -63,9 +66,15 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     val stopV : LiveData<Boolean>
         get() = _stopV
 
-    private var _isStartPlay : MutableLiveData<Boolean> = MutableLiveData(false)
+    private var _isStartPlay : MutableLiveData<Boolean> = MutableLiveData(true)
     val isStartPlay : LiveData<Boolean>
         get() = _isStartPlay
+
+    var soundClock : ChessClockRx? = null
+
+    public var isSoundOn = false
+
+    public var isCycleOn = false
 
     init {
         print("init view model")
@@ -93,11 +102,13 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     }
 
     /**
-     * запускается после окончания вибрации
+     * запускается после окончания вибрации тут же отключаем звук
      */
     fun vibrateFinish() {
         _startV.value = -99
         _stopV.value = false
+        soundClock!!.stopTimer()
+        _isStartPlay.value = true
     }
 
     /**
@@ -127,7 +138,7 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     }
 
     fun startClock( pattern : LongArray) {
-        val timer = ChessClockRx(this,pattern)
+        soundClock = ChessClockRx(this,pattern)
     }
 
     override fun timeChange(time: Long) {

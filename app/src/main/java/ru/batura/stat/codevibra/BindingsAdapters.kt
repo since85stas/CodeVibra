@@ -1,5 +1,6 @@
 package ru.batura.stat.codevibra
 
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.SeekBar
 import androidx.databinding.BindingAdapter
@@ -54,4 +55,13 @@ fun bindSeekListner(seekBar: SeekBar, model : MainViewModel) {
             seekBar.setOnSeekBarChangeListener(model.longListner)
         }
     }
+}
+
+/**
+ *   добавляем слушатель на фокус
+ */
+@BindingAdapter("addCheckListner")
+fun bindCheckListner(checkBox: CheckBox, model : MainViewModel) {
+    print("focus")
+    checkBox.setOnCheckedChangeListener(model.checkListner)
 }
