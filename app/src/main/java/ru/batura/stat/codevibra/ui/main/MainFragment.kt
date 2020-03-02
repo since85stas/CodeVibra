@@ -117,6 +117,16 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         viewModel.seekLongLive.observe(viewLifecycleOwner, Observer {
             long_title.text = getTitleString(R.id.long_title, it)
         })
+
+        //
+        viewModel.isStartPlay.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                playSound()
+            } else {
+                stopSound()
+            }
+        })
+
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -147,14 +157,13 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
 
-
-
-        playSound()
-
         // если вибрация доступна
         if (canVibrate) {
             // создаем рисунок вибрации
             val pattern = createVibrationPattern(num, tempProgress, longProgress)
+
+            viewModel.startClock(pattern)
+
             val longitude = pattern.sum()
             val timerObj = Timer()
             val timerTaskObj: TimerTask = object : TimerTask() {
@@ -224,6 +233,10 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             soundId, 1f,1f,0,0,1f
         )
 
+    }
+
+    fun stopSound() {
+        soundPool!!.stop(soundId)
     }
 
     /**
