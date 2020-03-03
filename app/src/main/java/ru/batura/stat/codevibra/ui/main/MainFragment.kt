@@ -206,7 +206,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
         if (canVibrate) vibrator.cancel()
-        timerObj!!.cancel()
+        if (timerObj != null) timerObj!!.cancel()
         uiScope.launch {
             stopVibrating()
         }
