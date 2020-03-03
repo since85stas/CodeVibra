@@ -45,16 +45,16 @@ class CheckListner (val model: MainViewModel) : CompoundButton.OnCheckedChangeLi
         when (id) {
             R.id.cycle_check -> {
                 if ( isChecked ) {
-                    model.isCycleOn = true
+                    model.isCycleOn = 1
                 } else {
-                    model.isCycleOn = false
+                    model.isCycleOn = -1
                 }
             }
             R.id.sound_check -> {
                 if ( isChecked ) {
                     model.isSoundOn = true
                 } else {
-                    model.isCycleOn = false
+                    model.isSoundOn = false
                 }
             }
         }

@@ -26,9 +26,10 @@ public class ChessClockSubscriber extends Subscriber<Long> {
         timeIntervalsSub = new long[timeIntervals.length+1];
         timeIntervalsSub[0] = 0;
         timeIntervalsSub[1] = timeIntervals[0];
-        for (int i = 2; i < timeIntervals.length-1; i++) {
-            timeIntervalsSub[i] = timeIntervalsSub[i-1] + timeIntervals[i];
+        for (int i = 2; i < timeIntervals.length+1; i++) {
+            timeIntervalsSub[i] = timeIntervalsSub[i-1] + timeIntervals[i-1];
         }
+        Log.d(TAG, "onstart: ");
     }
 
     @Override
@@ -51,9 +52,10 @@ public class ChessClockSubscriber extends Subscriber<Long> {
     public void onNext(Long aLong) {
         saved = aLong;
         mListner.timeChange(aLong);
-        if (count<timeIntervalsSub.length && aLong >= timeIntervalsSub[count] ) {
+        if (count<timeIntervalsSub.length -2 && aLong >= timeIntervalsSub[count] ) {
+            int interval = count ;
+            mListner.nextInterval( interval %2 == 1  );
             count++;
-            mListner.nextInterval();
         }
     }
 }

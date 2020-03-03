@@ -5,5 +5,5 @@ public interface ChessStateChageListner {
 
     void timeFinish();
 
-    void nextInterval();
+    void nextInterval(boolean bol);
 }

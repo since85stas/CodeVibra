@@ -50,6 +50,8 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
     private var soundId: Int = 0
 
+    var timerObj : Timer? = null
+
     companion object {
         fun newInstance() = MainFragment()
     }
@@ -120,10 +122,12 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
         //
         viewModel.isStartPlay.observe(viewLifecycleOwner, Observer {
-            if (it ) {
-                playSound()
-            } else {
-                stopSound()
+            if (viewModel.isSoundOn) {
+                if (it) {
+                    playSound()
+                } else {
+                    stopSound()
+                }
             }
         })
 
@@ -165,11 +169,12 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             viewModel.startClock(pattern)
 
             val longitude = pattern.sum()
-            val timerObj = Timer()
+            timerObj = Timer()
             val timerTaskObj: TimerTask = object : TimerTask() {
                 override fun run() {
                     uiScope.launch {
-                        stopVibrating()
+//                        stopVibrating()
+                        cancelVibrate()
                     }
                 }
             }
@@ -182,11 +187,11 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                         VibrationEffect.DEFAULT_AMPLITUDE
                     )
                 )
-                timerObj.schedule(timerTaskObj, longitude)
+                timerObj!!.schedule(timerTaskObj, longitude)
             } else {
                 // This method was deprecated in API level 26
                 vibrator.vibrate(pattern,0)
-                timerObj.schedule(timerTaskObj, longitude)
+                timerObj!!.schedule(timerTaskObj, longitude)
             }
         }
 
@@ -201,6 +206,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
         if (canVibrate) vibrator.cancel()
+        timerObj!!.cancel()
         uiScope.launch {
             stopVibrating()
         }

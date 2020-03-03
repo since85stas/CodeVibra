@@ -1,6 +1,5 @@
 package ru.batura.stat.codevibra.ui.main
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.launch
 import ru.batura.stat.codevibra.*
 import ru.batura.stat.codevibra.ChessClockRx.ChessClockRx
 import ru.batura.stat.codevibra.ChessClockRx.ChessStateChageListner
-import java.util.*
 
 class MainViewModel : ViewModel() , ChessStateChageListner {
 
@@ -54,10 +52,12 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     // добавляем листнер на Focus
     var focusListner: FocusListner = FocusListner(this)
 
+    // добавляем focusChanged
     private var _focusChanged : MutableLiveData<Int> = MutableLiveData()
     val focusChanged : LiveData<Int>
         get() = _focusChanged
 
+    //
     private var _startV : MutableLiveData<Int> = MutableLiveData()
     val startV : LiveData<Int>
         get() = _startV
@@ -66,15 +66,16 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
     val stopV : LiveData<Boolean>
         get() = _stopV
 
-    private var _isStartPlay : MutableLiveData<Boolean> = MutableLiveData(true)
+    private var _isStartPlay : MutableLiveData<Boolean> = MutableLiveData(false)
     val isStartPlay : LiveData<Boolean>
         get() = _isStartPlay
 
     var soundClock : ChessClockRx? = null
 
-    public var isSoundOn = false
+    var isSoundOn = false
 
-    public var isCycleOn = false
+    var isCycleOn = -1
+    var isCycleOnTemp = -1
 
     init {
         print("init view model")
@@ -98,6 +99,8 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
      */
     fun stopButtonClicked() {
         _stopV.value = true
+        isCycleOnTemp = isCycleOn
+        isCycleOn = 0
         print("stop clicked")
     }
 
@@ -105,10 +108,19 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
      * запускается после окончания вибрации тут же отключаем звук
      */
     fun vibrateFinish() {
-        _startV.value = -99
-        _stopV.value = false
-        soundClock!!.stopTimer()
-        _isStartPlay.value = true
+        if (isCycleOn == -1) {
+            _startV.value = -99
+            _stopV.value = false
+        }
+        if (isCycleOn == 0) {
+            _startV.value = -99
+            _stopV.value = false
+            soundClock!!.stopTimer()
+            isCycleOn = isCycleOnTemp
+        } else if (isCycleOn == 1) {
+            startButtonClicked()
+        }
+//        _isStartPlay.value = false
     }
 
     /**
@@ -149,13 +161,9 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
         print("time finish")
     }
 
-    override fun nextInterval() {
+    override fun nextInterval(value:Boolean) {
         uiScope.launch {
-            if (!_isStartPlay.value!!) {
-                _isStartPlay.value = true
-            } else {
-                _isStartPlay.value = false
-            }
+            _isStartPlay.value = value
         }
     }
 }
