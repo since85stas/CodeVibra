@@ -43,5 +43,22 @@ fun createVibrationPattern ( num:Int, tempProgress : Int , longProgress : Int) :
             }
         }
     }
+
+    class TempUtils () {
+
+    }
+
     return longList.toLongArray()
+}
+
+
+fun getGetTempValue(tempProgress : Int , longProgress : Int) : Int{
+    // временные величины
+    val xTemp = tempProgress /100.0
+    val xDl = longProgress /100.0
+
+    val TEN : Double = 10.toDouble()
+
+    val tPause : Long = ((0.125) * TEN.pow( 4 - xTemp)).toLong()
+    return 60000/tPause.toInt()
 }

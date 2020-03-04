@@ -17,13 +17,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.main_fragment.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ru.batura.stat.codevibra.R
 import ru.batura.stat.codevibra.createVibrationPattern
 import ru.batura.stat.codevibra.databinding.MainFragmentBinding
+import ru.batura.stat.codevibra.getGetTempValue
 import java.util.*
 
 
@@ -45,6 +43,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
      * a [ViewModel] update the UI after performing some processing.
      */
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
     private var soundPool: SoundPool? = null
 
@@ -72,7 +71,9 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             false
         )
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        val factory = MainFragmentViewModelFactory(requireActivity().application)
+
+        viewModel = ViewModelProviders.of(this, factory).get(MainViewModel::class.java)
 
         bindings.viewModel = viewModel
 
@@ -123,10 +124,14 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         //
         viewModel.isStartPlay.observe(viewLifecycleOwner, Observer {
             if (viewModel.isSoundOn) {
-                if (it) {
-                    playSound()
-                } else {
-                    stopSound()
+                uiScope.launch {
+                    withContext(Dispatchers.IO) {
+                        if (it) {
+                            playSound()
+                        } else {
+                            stopSound()
+                        }
+                    }
                 }
             }
         })
@@ -172,10 +177,10 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             timerObj = Timer()
             val timerTaskObj: TimerTask = object : TimerTask() {
                 override fun run() {
-                    uiScope.launch {
+//                    uiScope.launch {
 //                        stopVibrating()
-                        cancelVibrate()
-                    }
+//                        cancelVibrate()
+//                    }
                 }
             }
 
@@ -184,14 +189,19 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                 vibrator.vibrate(
                     VibrationEffect.createWaveform(
                         pattern,
-                        VibrationEffect.DEFAULT_AMPLITUDE
+                        0
                     )
                 )
-                timerObj!!.schedule(timerTaskObj, longitude)
+
+                ioScope.launch {
+                    timerObj!!.schedule(timerTaskObj, longitude)
+                }
             } else {
                 // This method was deprecated in API level 26
                 vibrator.vibrate(pattern,0)
-                timerObj!!.schedule(timerTaskObj, longitude)
+                ioScope.launch {
+                    timerObj!!.schedule(timerTaskObj, longitude)
+                }
             }
         }
 
@@ -234,14 +244,13 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     /**
      *
      */
-    fun playSound() {
+    suspend fun playSound() {
         soundPool!!.play(
             soundId, 1f,1f,0,0,1f
         )
-
     }
 
-    fun stopSound() {
+    suspend fun stopSound() {
         soundPool!!.stop(soundId)
     }
 
@@ -250,7 +259,10 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
      */
     private fun getTitleString (id : Int, progress : Int) : String{
         when (id) {
-            R.id.temp_title -> return "Temp $progress"
+            R.id.temp_title -> {
+                val res = getGetTempValue( progress , longitude_seek.progress)
+                return "Temp $res"
+            }
             R.id.long_title -> return "Long $progress"
         }
         return "Title"

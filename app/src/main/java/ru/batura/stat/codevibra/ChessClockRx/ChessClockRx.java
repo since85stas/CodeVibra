@@ -71,6 +71,7 @@ public class ChessClockRx {
     }
 
     public void stopTimer() {
+        logOnCompleted();
         mSubscription.unsubscribe();
     }
 

@@ -1,5 +1,10 @@
 package ru.batura.stat.codevibra.ui.main
 
+import android.app.Application
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,8 +15,9 @@ import kotlinx.coroutines.launch
 import ru.batura.stat.codevibra.*
 import ru.batura.stat.codevibra.ChessClockRx.ChessClockRx
 import ru.batura.stat.codevibra.ChessClockRx.ChessStateChageListner
+import java.util.*
 
-class MainViewModel : ViewModel() , ChessStateChageListner {
+class MainViewModel (val application: Application) : ViewModel() , ChessStateChageListner {
 
     /**
      * viewModelJob allows us to cancel all coroutines started by this ViewModel.
@@ -79,6 +85,7 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
 
     init {
         print("init view model")
+//        createVibrate(1,1,1)
     }
 
     fun startButtonClicked() {
@@ -166,6 +173,7 @@ class MainViewModel : ViewModel() , ChessStateChageListner {
             _isStartPlay.value = value
         }
     }
-}
+
+ }
 
 
