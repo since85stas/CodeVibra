@@ -33,13 +33,12 @@
             addEditTextWatcherBin="@{viewModel}"
             addFocusListner="@{viewModel}"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:inputType="number"
-            android:text="0"
+            android:layout_height="200dp"
+            android:text="01111111111"
             style="@style/BasicTextStyle"
             android:layout_gravity="top"
             android:gravity="top"
-
+            android:numeric="integer"
             />
 
         <EditText

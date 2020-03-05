@@ -72,6 +72,7 @@ class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
                 _number = s.toString().toInt(2)
             } catch (e: Exception) {
                 Log.d("TextW", " Wrong number")
+                _number = -111;
             }
         } else {
             _number = 0

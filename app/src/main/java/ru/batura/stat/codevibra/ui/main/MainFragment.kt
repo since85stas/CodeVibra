@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,6 +23,7 @@ import ru.batura.stat.codevibra.R
 import ru.batura.stat.codevibra.createVibrationPattern
 import ru.batura.stat.codevibra.databinding.MainFragmentBinding
 import ru.batura.stat.codevibra.getGetTempValue
+import java.time.Duration
 import java.util.*
 
 
@@ -103,6 +105,9 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                     viewModel.seekTempLive.value!!,
                     viewModel.seekLongLive.value!!
                     )
+            } else {
+                val toast = Toast.makeText(activity ,"Wrong binary format number",Toast.LENGTH_LONG)
+                toast.show()
             }
         })
 
