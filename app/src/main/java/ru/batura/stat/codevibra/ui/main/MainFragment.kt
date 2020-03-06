@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.text.bold
+import androidx.core.text.set
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -85,7 +87,8 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         // наблюдаем за изменением целого значения
         viewModel.decimalLive.observe(viewLifecycleOwner, Observer {
-            edit_binary.text = SpannableStringBuilder(it.toString(2))
+            edit_binary.text = SpannableStringBuilder(it.toString(2),1,2)
+                .bold { append(it.toString(2),2,3) }
         })
 
         // наблюдаем за изменением бинарного значения
