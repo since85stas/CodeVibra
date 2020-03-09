@@ -47,8 +47,8 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     val decimalTextWatch = DecimalTextWatcher(this)
 
     // liveData для числовых значений
-    var decimalLive : MutableLiveData<Int> = MutableLiveData()
-    var binaryLive : MutableLiveData<Int> = MutableLiveData()
+    var decimalLive : MutableLiveData<Long> = MutableLiveData()
+    var binaryLive : MutableLiveData<Long> = MutableLiveData()
 
     // листнеры для отслеживания ползунков
     var tempListner = TempSeekBarListner(this)
@@ -70,8 +70,8 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         get() = _focusChanged
 
     //
-    private var _startV : MutableLiveData<Int> = MutableLiveData()
-    val startV : LiveData<Int>
+    private var _startV : MutableLiveData<Long> = MutableLiveData()
+    val startV : LiveData<Long>
         get() = _startV
 
     private var _stopV : MutableLiveData<Boolean> = MutableLiveData()
@@ -98,7 +98,6 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
 //        createVibrate(1,1,1)
     }
 
-    @UseExperimental(ExperimentalStdlibApi::class)
     fun startButtonClicked() {
         print("start clicked")
         when (focusListner.focus) {
@@ -199,7 +198,7 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     }
 
     fun createAnimationText(boldPos : Int) {
-        val string = decimalLive.value!!.toString(2)
+        val string = decimalTextWatch.number.toString(2)
         val stringBuilder = SpannableStringBuilder()
         if (string.length > 1) {
             if (boldPos == 0) {

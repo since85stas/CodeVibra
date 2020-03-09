@@ -13,13 +13,13 @@ import java.lang.Exception
  */
 class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
 
-    var _number:Int = 0
+    var _number: Long = 0
 
-    fun setNumber( string: Int) {
+    fun setNumber( string: Long) {
         _number = string
     }
 
-    val number:Int
+    val number: Long
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
@@ -32,7 +32,7 @@ class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         if ( s!!.isNotEmpty()) {
             try {
-                _number = s.toString().toInt()
+                _number = s.toString().toLong()
             } catch (e: Exception) {
                 Log.d("TextW", " Wrong number")
             }
@@ -50,13 +50,13 @@ class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
  */
 class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
 
-    var _number:Int = 0
+    var _number: Long = 0
 
-    fun setNumber( string: Int) {
+    fun setNumber( string: Long) {
         _number = string
     }
 
-    val number:Int
+    val number: Long
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
@@ -69,7 +69,7 @@ class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         if ( s!!.isNotEmpty()) {
             try {
-                _number = s.toString().toInt(2)
+                _number = s.toString().toLong(2)
             } catch (e: Exception) {
                 Log.d("TextW", " Wrong number")
                 _number = -111;

@@ -12,7 +12,7 @@ import ru.batura.stat.codevibra.ui.main.MainViewModel
 @BindingAdapter("addEditTextWatcherDec")
 fun bindEditTextDec(editText: EditText, model : MainViewModel) {
     val string = editText.text.toString()
-    model.decimalTextWatch.setNumber(editText.text.toString().toInt())
+    model.decimalTextWatch.setNumber(editText.text.toString().toLong())
 //    editText.addTextChangedListener(model.decimalTextWatch)
 }
 
@@ -22,7 +22,7 @@ fun bindEditTextDec(editText: EditText, model : MainViewModel) {
 @BindingAdapter("addEditTextWatcherBin")
 fun bindEditTextBinary(editText: EditText, model : MainViewModel) {
     val string = editText.text.toString()
-    model.binaryTextWatch.setNumber(editText.text.toString().toInt())
+    model.binaryTextWatch.setNumber(editText.text.toString().toLong(2))
 //    editText.addTextChangedListener(model.binaryTextWatch)
 }
 

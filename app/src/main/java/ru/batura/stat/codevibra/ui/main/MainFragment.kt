@@ -90,11 +90,13 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         // наблюдаем за изменением целого значения
         viewModel.decimalLive.observe(viewLifecycleOwner, Observer {
             edit_binary.text = SpannableStringBuilder(it.toString(2))
+//            viewModel.uptadeBinarLive()
         })
 
         // наблюдаем за изменением бинарного значения
         viewModel.binaryLive.observe(viewLifecycleOwner, Observer {
             edit_decimal.text = SpannableStringBuilder(it.toString())
+//            viewModel.uptadeDecimLive()
         })
 
         // наблюдаем за изменением фокуса
@@ -177,7 +179,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     /**
      * запускаем вибрацию с нужой каритной
      */
-    private fun createVibrate(num : Int, tempProgress : Int, longProgress : Int) {
+    private fun createVibrate(num : Long, tempProgress : Int, longProgress : Int) {
         val vibrator = this.activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
 

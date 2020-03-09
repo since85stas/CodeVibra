@@ -3,7 +3,7 @@ package ru.batura.stat.codevibra
 import java.util.*
 import kotlin.math.pow
 
-fun createVibrationPattern ( num:Int, tempProgress : Int , longProgress : Int) : LongArray {
+fun createVibrationPattern ( num: Long, tempProgress : Int , longProgress : Int) : LongArray {
 
     // временные величины
     val xTemp = tempProgress /100.0
@@ -52,7 +52,7 @@ fun createVibrationPattern ( num:Int, tempProgress : Int , longProgress : Int) :
 }
 
 
-fun getIntervalLenght(num:Int, tempProgress : Int , longProgress : Int) : Long{
+fun getIntervalLenght(num:Long, tempProgress : Int , longProgress : Int) : Long{
     val xTemp = tempProgress /100.0
     val xDl = longProgress /100.0
     val TEN : Double = 10.toDouble()

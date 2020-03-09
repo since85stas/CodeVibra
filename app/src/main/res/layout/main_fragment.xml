@@ -32,8 +32,8 @@
             addEditTextWatcherBin="@{viewModel}"
             addFocusListner="@{viewModel}"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:text="0"
+            android:layout_height="100dp"
+            android:text="1"
             style="@style/BasicTextStyle"
             android:layout_gravity="top"
             android:gravity="top"
@@ -43,8 +43,8 @@
         <TextView
             android:id="@+id/text_view_binary"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:text="0"
+            android:layout_height="100dp"
+            android:text="1"
             style="@style/BasicTextStyle"
             android:layout_gravity="top"
             android:gravity="top"
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:focusedByDefault="true"
             android:inputType="number"
-            android:text="0"
+            android:text="1"
             style="@style/BasicTextStyle"
             />
 
