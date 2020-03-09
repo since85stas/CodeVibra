@@ -2,9 +2,14 @@ package ru.batura.stat.codevibra.ui.main
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import androidx.core.text.bold
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +21,7 @@ import ru.batura.stat.codevibra.*
 import ru.batura.stat.codevibra.ChessClockRx.ChessClockRx
 import ru.batura.stat.codevibra.ChessClockRx.ChessStateChageListner
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel (val application: Application) : ViewModel() , ChessStateChageListner {
 
@@ -76,6 +82,10 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     val isStartPlay : LiveData<Boolean>
         get() = _isStartPlay
 
+    private var _textAnimation : MutableLiveData<SpannableStringBuilder> = MutableLiveData()
+    val textAnimation : LiveData<SpannableStringBuilder>
+        get() = _textAnimation
+
     var soundClock : ChessClockRx? = null
 
     var isSoundOn = false
@@ -88,17 +98,18 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
 //        createVibrate(1,1,1)
     }
 
+    @UseExperimental(ExperimentalStdlibApi::class)
     fun startButtonClicked() {
         print("start clicked")
         when (focusListner.focus) {
             R.id.edit_binary -> {
                 _startV.value = binaryLive.value
             }
-
             R.id.edit_decimal -> {
                 _startV.value = decimalLive.value
             }
         }
+//        createAnimationText(2)
     }
 
     /**
@@ -122,7 +133,8 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         if (isCycleOn == 0) {
             _startV.value = -99
             _stopV.value = false
-            soundClock!!.stopTimer()
+
+//            soundClock!!.stopTimer()
             isCycleOn = isCycleOnTemp
         } else if (isCycleOn == 1) {
             startButtonClicked()
@@ -156,8 +168,12 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         seekLongLive.value = longListner.value
     }
 
-    fun startClock( pattern : LongArray) {
-        soundClock = ChessClockRx(this,pattern)
+    fun startClock( pattern : LongArray, interval : Long) {
+        soundClock = ChessClockRx(this,pattern,interval)
+    }
+
+    fun startClockBold( pattern : LongArray, interval : Long) {
+        soundClock = ChessClockRx(this,pattern, interval)
     }
 
     override fun timeChange(time: Long) {
@@ -171,7 +187,40 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     override fun nextInterval(value:Boolean) {
         uiScope.launch {
             _isStartPlay.value = value
+//            createAnimationText()
         }
+    }
+
+    override fun setBold(position: Int) {
+//        if (position == 2)
+            uiScope.launch {
+                createAnimationText(position)
+            }
+    }
+
+    fun createAnimationText(boldPos : Int) {
+        val string = decimalLive.value!!.toString(2)
+        val stringBuilder = SpannableStringBuilder()
+        if (string.length > 1) {
+            if (boldPos == 0) {
+                stringBuilder.bold { append(string.elementAt(boldPos).toString()) }
+                    .append(string.substring(boldPos + 1, string.length))
+            } else if (boldPos == string.length - 1) {
+                stringBuilder
+                    .append(string.substring(0, boldPos ))
+                    .bold { append(string.elementAt(boldPos)) }
+            } else {
+                stringBuilder.append((string.substring(0, boldPos ).toString()))
+                stringBuilder.bold { append(string.elementAt(boldPos).toString()) }
+                stringBuilder.append(string.substring(boldPos + 1, string.length ).toString())
+            }
+        }
+//        val spannable : Spannable = stringBuilder
+//                    .setSpan(ForegroundColorSpan(Color.GREEN),
+//                0,
+//                2,
+//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        _textAnimation.value = stringBuilder
     }
 
  }

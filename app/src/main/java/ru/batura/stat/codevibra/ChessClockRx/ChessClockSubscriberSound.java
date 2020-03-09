@@ -2,11 +2,9 @@ package ru.batura.stat.codevibra.ChessClockRx;
 
 import android.util.Log;
 
-import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder;
-
 import rx.Subscriber;
 
-public class ChessClockSubscriber extends Subscriber<Long> {
+public class ChessClockSubscriberSound extends Subscriber<Long> {
 
     public ChessStateChageListner mListner;
 
@@ -16,10 +14,10 @@ public class ChessClockSubscriber extends Subscriber<Long> {
 
     int count = 0;
     
-    public static final String TAG = ChessClockSubscriber.class.getName();
+    public static final String TAG = ChessClockSubscriberSound.class.getName();
 
 
-    public ChessClockSubscriber(ChessStateChageListner listner, long[] timeIntervals) {
+    public ChessClockSubscriberSound(ChessStateChageListner listner, long[] timeIntervals) {
         super();
         mListner = listner;
 
@@ -55,7 +53,9 @@ public class ChessClockSubscriber extends Subscriber<Long> {
         if (count<timeIntervalsSub.length -2 && aLong >= timeIntervalsSub[count] ) {
             int interval = count ;
             mListner.nextInterval( interval %2 == 1  );
+            mListner.setBold(count);
             count++;
+
         }
     }
 }

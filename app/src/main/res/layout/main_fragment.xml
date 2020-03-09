@@ -5,7 +5,6 @@
     >
 
     <data>
-
         <variable
             name="viewModel"
             type="ru.batura.stat.codevibra.ui.main.MainViewModel" />
@@ -34,11 +33,22 @@
             addFocusListner="@{viewModel}"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:text="01111111111"
+            android:text="0"
             style="@style/BasicTextStyle"
             android:layout_gravity="top"
             android:gravity="top"
             android:numeric="integer"
+            />
+
+        <TextView
+            android:id="@+id/text_view_binary"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:text="0"
+            style="@style/BasicTextStyle"
+            android:layout_gravity="top"
+            android:gravity="top"
+            android:visibility="gone"
             />
 
         <EditText

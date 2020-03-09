@@ -2,16 +2,11 @@ package ru.batura.stat.codevibra.ChessClockRx;
 
 import android.util.Log;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 import ru.batura.stat.codevibra.ui.main.MainViewModel;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ChessClockRx {
@@ -19,6 +14,8 @@ public class ChessClockRx {
     public static final String TAG = "ChessClockRx";
 
     long[] timeIntervals;
+
+    long interval;
 
     MainViewModel model;
 
@@ -28,30 +25,27 @@ public class ChessClockRx {
 
     Subscription mSubscription;
 
-    public ChessClockRx(MainViewModel model, long[] array) {
+    public ChessClockRx(MainViewModel model, long[] array, long interval  ) {
         this.model = model;
         timeIntervals = array;
+        this.interval = interval;
         rxChessTimer();
 
     }
 
-
-
     public void rxChessTimer() {
-
         if (!isRunning) {
             isRunning = true;
             mSubscription = initChessClockObserver().
                     subscribeOn(Schedulers.io()).
                     onBackpressureBuffer().
-                    subscribe(new ChessClockSubscriber(model,timeIntervals));
+                    subscribe(new ChessClockSubscriberBold(model,interval));
         } else {
             isRunning = false;
             mSubscription.unsubscribe();
         }
-
-
     }
+
 
     private Observable<Long> initChessClockObserver() {
 
@@ -65,7 +59,7 @@ public class ChessClockRx {
 
         Observable<Long> obs = Observable.interval(10, TimeUnit.MILLISECONDS).
                 map(i -> i*10).
-                takeUntil(aLong -> (aLong == end*10));
+                takeUntil(aLong -> (aLong > end - 15));
 
         return obs;
     }

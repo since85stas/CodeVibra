@@ -6,4 +6,6 @@ public interface ChessStateChageListner {
     void timeFinish();
 
     void nextInterval(boolean bol);
+
+    void setBold(int position);
 }

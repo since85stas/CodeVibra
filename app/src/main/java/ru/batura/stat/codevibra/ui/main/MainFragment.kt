@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.set
@@ -25,6 +26,7 @@ import ru.batura.stat.codevibra.R
 import ru.batura.stat.codevibra.createVibrationPattern
 import ru.batura.stat.codevibra.databinding.MainFragmentBinding
 import ru.batura.stat.codevibra.getGetTempValue
+import ru.batura.stat.codevibra.getIntervalLenght
 import java.time.Duration
 import java.util.*
 
@@ -87,8 +89,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         // наблюдаем за изменением целого значения
         viewModel.decimalLive.observe(viewLifecycleOwner, Observer {
-            edit_binary.text = SpannableStringBuilder(it.toString(2),1,2)
-                .bold { append(it.toString(2),2,3) }
+            edit_binary.text = SpannableStringBuilder(it.toString(2))
         })
 
         // наблюдаем за изменением бинарного значения
@@ -108,9 +109,10 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                     viewModel.seekTempLive.value!!,
                     viewModel.seekLongLive.value!!
                     )
+//                viewModel.createAnimationText(it)
             } else {
-                val toast = Toast.makeText(activity ,"Wrong binary format number",Toast.LENGTH_LONG)
-                toast.show()
+//                val toast = Toast.makeText(activity ,"Wrong binary format number",Toast.LENGTH_LONG)
+//                toast.show()
             }
         })
 
@@ -143,6 +145,11 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                 }
             }
         })
+
+        viewModel.textAnimation.observe(viewLifecycleOwner, Observer {
+            text_view_binary.setText(it, TextView.BufferType.SPANNABLE)
+        }
+        )
 
         super.onActivityCreated(savedInstanceState)
     }
@@ -179,16 +186,16 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             // создаем рисунок вибрации
             val pattern = createVibrationPattern(num, tempProgress, longProgress)
 
-            viewModel.startClock(pattern)
+            viewModel.startClockBold(pattern, getIntervalLenght(num, tempProgress, longProgress))
 
             val longitude = pattern.sum()
             timerObj = Timer()
             val timerTaskObj: TimerTask = object : TimerTask() {
                 override fun run() {
-//                    uiScope.launch {
+                    uiScope.launch {
 //                        stopVibrating()
-//                        cancelVibrate()
-//                    }
+                        cancelVibrate()
+                    }
                 }
             }
 
@@ -282,11 +289,18 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     private fun isVibrating () {
         start_button.visibility = View.GONE
         stop_button.visibility  = View.VISIBLE
+
+        edit_binary.visibility = View.GONE
+        text_view_binary.visibility = View.VISIBLE
     }
 
     private fun stopVibrating() {
         start_button.visibility = View.VISIBLE
         stop_button.visibility  = View.GONE
+
+        edit_binary.visibility = View.VISIBLE
+        text_view_binary.visibility = View.GONE
+
         viewModel.vibrateFinish()
     }
 }
