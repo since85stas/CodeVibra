@@ -8,6 +8,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import androidx.core.text.bold
 import androidx.lifecycle.LiveData
@@ -23,7 +24,7 @@ import ru.batura.stat.codevibra.ChessClockRx.ChessStateChageListner
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MainViewModel (val application: Application) : ViewModel() , ChessStateChageListner {
+class MainViewModel(val application: Application) : ViewModel(), ChessStateChageListner {
 
     /**
      * viewModelJob allows us to cancel all coroutines started by this ViewModel.
@@ -47,8 +48,10 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     val decimalTextWatch = DecimalTextWatcher(this)
 
     // liveData для числовых значений
-    var decimalLive : MutableLiveData<Long> = MutableLiveData()
-    var binaryLive : MutableLiveData<Long> = MutableLiveData()
+    var decimalLive: MutableLiveData<Long> = MutableLiveData()
+    var binaryLive: MutableLiveData<Long> = MutableLiveData()
+
+    var numberRepresentation: String = ""
 
     // листнеры для отслеживания ползунков
     var tempListner = TempSeekBarListner(this)
@@ -58,35 +61,35 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
     var checkListner = CheckListner(this)
 
     //
-    var seekTempLive : MutableLiveData<Int> = MutableLiveData()
-    var seekLongLive : MutableLiveData<Int> = MutableLiveData()
+    var seekTempLive: MutableLiveData<Int> = MutableLiveData()
+    var seekLongLive: MutableLiveData<Int> = MutableLiveData()
 
     // добавляем листнер на Focus
     var focusListner: FocusListner = FocusListner(this)
 
     // добавляем focusChanged
-    private var _focusChanged : MutableLiveData<Int> = MutableLiveData()
-    val focusChanged : LiveData<Int>
+    private var _focusChanged: MutableLiveData<Int> = MutableLiveData()
+    val focusChanged: LiveData<Int>
         get() = _focusChanged
 
     //
-    private var _startV : MutableLiveData<Long> = MutableLiveData()
-    val startV : LiveData<Long>
+    private var _startV: MutableLiveData<String> = MutableLiveData()
+    val startV: LiveData<String>
         get() = _startV
 
-    private var _stopV : MutableLiveData<Boolean> = MutableLiveData()
-    val stopV : LiveData<Boolean>
+    private var _stopV: MutableLiveData<Boolean> = MutableLiveData()
+    val stopV: LiveData<Boolean>
         get() = _stopV
 
-    private var _isStartPlay : MutableLiveData<Boolean> = MutableLiveData(false)
-    val isStartPlay : LiveData<Boolean>
+    private var _isStartPlay: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isStartPlay: LiveData<Boolean>
         get() = _isStartPlay
 
-    private var _textAnimation : MutableLiveData<SpannableStringBuilder> = MutableLiveData()
-    val textAnimation : LiveData<SpannableStringBuilder>
+    private var _textAnimation: MutableLiveData<SpannableStringBuilder> = MutableLiveData()
+    val textAnimation: LiveData<SpannableStringBuilder>
         get() = _textAnimation
 
-    var soundClock : ChessClockRx? = null
+    var soundClock: ChessClockRx? = null
 
     var isSoundOn = false
 
@@ -100,15 +103,49 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
 
     fun startButtonClicked() {
         print("start clicked")
-        when (focusListner.focus) {
-            R.id.edit_binary -> {
-                _startV.value = binaryLive.value
+//        when (focusListner.focus) {
+//            R.id.edit_binary -> {
+//                _startV.value = binaryLive.value
+//            }
+//            R.id.edit_decimal -> {
+//                _startV.value = decimalLive.value
+//            }
+//        }
+        _startV.value = numberRepresentation
+//        createAnimationText(2)
+    }
+
+    /**
+     *
+     */
+    fun createNumbRespresentation(textWatchId : Int) {
+
+        if (binaryTextWatch.number == decimalTextWatch.number) {
+            numberRepresentation = decimalTextWatch.number.toString(2)
+        }  else if ( binaryTextWatch.number  == (-111L) || decimalTextWatch.number == (-111L)) {
+            numberRepresentation = "NO"
+            print("minus representation")
+        }  else {
+            print("wrong representation")
+        }
+        when (textWatchId) {
+            BINARY_ID -> {
+                if (numberRepresentation != "NO") {
+                    if (decimalLive.value != decimalTextWatch.number) {
+                        decimalLive.value = decimalTextWatch.number
+                    }
+                } else {
+                    decimalLive.value = 0
+                }
             }
-            R.id.edit_decimal -> {
-                _startV.value = decimalLive.value
+            DECIMAL_ID -> {
+                if ( binaryLive.value != binaryTextWatch.number ) {
+                    binaryLive.value = binaryTextWatch.number
+                }
             }
         }
-//        createAnimationText(2)
+
+
     }
 
     /**
@@ -126,11 +163,11 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
      */
     fun vibrateFinish() {
         if (isCycleOn == -1) {
-            _startV.value = -99
+            _startV.value = "STOP"
             _stopV.value = false
         }
         if (isCycleOn == 0) {
-            _startV.value = -99
+            _startV.value = "STOP"
             _stopV.value = false
 
 //            soundClock!!.stopTimer()
@@ -152,7 +189,7 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
      * изменяет значение бинарного поля
      */
     fun uptadeBinarLive() {
-        binaryLive.value  = binaryTextWatch.number
+        binaryLive.value = binaryTextWatch.number
     }
 
     /**
@@ -167,12 +204,12 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         seekLongLive.value = longListner.value
     }
 
-    fun startClock( pattern : LongArray, interval : Long) {
-        soundClock = ChessClockRx(this,pattern,interval)
+    fun startClock(pattern: LongArray, interval: Long) {
+        soundClock = ChessClockRx(this, pattern, interval)
     }
 
-    fun startClockBold( pattern : LongArray, interval : Long) {
-        soundClock = ChessClockRx(this,pattern, interval)
+    fun startClockBold(pattern: LongArray, interval: Long) {
+        soundClock = ChessClockRx(this, pattern, interval)
     }
 
     override fun timeChange(time: Long) {
@@ -183,7 +220,7 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         print("time finish")
     }
 
-    override fun nextInterval(value:Boolean) {
+    override fun nextInterval(value: Boolean) {
         uiScope.launch {
             _isStartPlay.value = value
 //            createAnimationText()
@@ -192,12 +229,12 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
 
     override fun setBold(position: Int) {
 //        if (position == 2)
-            uiScope.launch {
-                createAnimationText(position)
-            }
+        uiScope.launch {
+            createAnimationText(position)
+        }
     }
 
-    fun createAnimationText(boldPos : Int) {
+    fun createAnimationText(boldPos: Int) {
         val string = decimalTextWatch.number.toString(2)
         val stringBuilder = SpannableStringBuilder()
         if (string.length > 1) {
@@ -206,12 +243,12 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
                     .append(string.substring(boldPos + 1, string.length))
             } else if (boldPos == string.length - 1) {
                 stringBuilder
-                    .append(string.substring(0, boldPos ))
+                    .append(string.substring(0, boldPos))
                     .bold { append(string.elementAt(boldPos)) }
             } else {
-                stringBuilder.append((string.substring(0, boldPos ).toString()))
+                stringBuilder.append((string.substring(0, boldPos).toString()))
                 stringBuilder.bold { append(string.elementAt(boldPos).toString()) }
-                stringBuilder.append(string.substring(boldPos + 1, string.length ).toString())
+                stringBuilder.append(string.substring(boldPos + 1, string.length).toString())
             }
         }
 //        val spannable : Spannable = stringBuilder
@@ -222,6 +259,6 @@ class MainViewModel (val application: Application) : ViewModel() , ChessStateCha
         _textAnimation.value = stringBuilder
     }
 
- }
+}
 
 

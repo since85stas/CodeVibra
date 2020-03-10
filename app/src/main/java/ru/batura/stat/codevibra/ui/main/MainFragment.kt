@@ -89,13 +89,13 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         // наблюдаем за изменением целого значения
         viewModel.decimalLive.observe(viewLifecycleOwner, Observer {
-            edit_binary.text = SpannableStringBuilder(it.toString(2))
+            edit_decimal.text = SpannableStringBuilder(it.toString())
 //            viewModel.uptadeBinarLive()
         })
 
         // наблюдаем за изменением бинарного значения
         viewModel.binaryLive.observe(viewLifecycleOwner, Observer {
-            edit_decimal.text = SpannableStringBuilder(it.toString())
+            edit_binary.text = SpannableStringBuilder(it.toString(2))
 //            viewModel.uptadeDecimLive()
         })
 
@@ -106,15 +106,18 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
         // наблюдаем за включением вибрации
         viewModel.startV.observe(viewLifecycleOwner, Observer {
-            if (it > 0) {
-                createVibrate( it,
+            if (it == "STOP") {
+
+            }
+            else if (it !=  "NO") {
+                createVibrate( it.toLong(2),
                     viewModel.seekTempLive.value!!,
                     viewModel.seekLongLive.value!!
                     )
 //                viewModel.createAnimationText(it)
             } else {
-//                val toast = Toast.makeText(activity ,"Wrong binary format number",Toast.LENGTH_LONG)
-//                toast.show()
+                val toast = Toast.makeText(activity ,"Wrong binary format number",Toast.LENGTH_LONG)
+                toast.show()
             }
         })
 
@@ -165,12 +168,16 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
             R.id.edit_binary -> {
                 print("binary")
                 edit_binary.addTextChangedListener(viewModel.binaryTextWatch)
+                viewModel.binaryTextWatch.setNumber(viewModel.decimalTextWatch.number)
+
                 edit_decimal.removeTextChangedListener(viewModel.decimalTextWatch)
             }
 
             R.id.edit_decimal -> {
                 print("decimal")
                 edit_decimal.addTextChangedListener(viewModel.decimalTextWatch)
+                viewModel.decimalTextWatch.setNumber(viewModel.binaryTextWatch.number)
+
                 edit_binary.removeTextChangedListener(viewModel.binaryTextWatch)
             }
         }

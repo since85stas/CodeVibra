@@ -7,11 +7,17 @@ import androidx.lifecycle.ViewModel
 import ru.batura.stat.codevibra.ui.main.MainViewModel
 import java.lang.Exception
 
+public val DECIMAL_ID = 1123
+
+public val BINARY_ID = 1122
+
 /*
     класс для получения текста из EditText простейший вариант
     без особых наваротов, для нормального использования надо доработать
  */
 class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
+
+
 
     var _number: Long = 0
 
@@ -23,7 +29,9 @@ class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
-        model.uptadeDecimLive()
+//        model.uptadeDecimLive()
+        model.binaryTextWatch.setNumber(model.decimalTextWatch.number)
+        model.createNumbRespresentation(DECIMAL_ID)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -50,6 +58,8 @@ class DecimalTextWatcher (val model : MainViewModel) : TextWatcher {
  */
 class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
 
+
+
     var _number: Long = 0
 
     fun setNumber( string: Long) {
@@ -60,7 +70,11 @@ class BinaryTextWatcher (val model : MainViewModel) : TextWatcher {
         get() = _number
 
     override fun afterTextChanged(s: Editable?) {
-        model.uptadeBinarLive()
+//        model.uptadeBinarLive()
+        if (_number != -111L) {
+            model.decimalTextWatch.setNumber(model.binaryTextWatch.number)
+        }
+        model.createNumbRespresentation(BINARY_ID)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
