@@ -1,8 +1,11 @@
 package ru.batura.stat.codevibra.ui.main
 
 import android.app.Application
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -145,7 +148,6 @@ class MainViewModel(val application: Application) : ViewModel(), ChessStateChage
             }
         }
 
-
     }
 
     /**
@@ -155,8 +157,10 @@ class MainViewModel(val application: Application) : ViewModel(), ChessStateChage
         _stopV.value = true
         isCycleOnTemp = isCycleOn
         isCycleOn = 0
+        soundClock!!.stopTimer()
         print("stop clicked")
     }
+
 
     /**
      * запускается после окончания вибрации тут же отключаем звук
@@ -235,7 +239,8 @@ class MainViewModel(val application: Application) : ViewModel(), ChessStateChage
     }
 
     fun createAnimationText(boldPos: Int) {
-        val string = decimalTextWatch.number.toString(2)
+//        val string = decimalTextWatch.number.toString(2)
+        var string = startV.value!!
         val stringBuilder = SpannableStringBuilder()
         if (string.length > 1) {
             if (boldPos == 0) {
@@ -257,6 +262,19 @@ class MainViewModel(val application: Application) : ViewModel(), ChessStateChage
 //                2,
 //                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         _textAnimation.value = stringBuilder
+    }
+
+    fun openYoutubeLink() {
+        val youtubeID: String = "https://www.youtube.com/channel/UCmqRYvJblsMJiYMNgaGG6oQ/videos"
+        val intentApp = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeID))
+        intentApp.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        val intentBrowser = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + youtubeID))
+        intentBrowser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            application.startActivity(intentApp)
+        } catch (ex: ActivityNotFoundException) {
+            application.startActivity(intentBrowser)
+        }
     }
 
 }

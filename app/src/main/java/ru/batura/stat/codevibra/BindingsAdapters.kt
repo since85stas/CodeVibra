@@ -1,8 +1,10 @@
 package ru.batura.stat.codevibra
 
+import android.text.Html
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import ru.batura.stat.codevibra.ui.main.MainViewModel
 
@@ -12,7 +14,7 @@ import ru.batura.stat.codevibra.ui.main.MainViewModel
 @BindingAdapter("addEditTextWatcherDec")
 fun bindEditTextDec(editText: EditText, model : MainViewModel) {
     val string = editText.text.toString()
-    model.decimalTextWatch.setNumber(editText.text.toString().toLong())
+//    model.decimalTextWatch.setNumber(editText.text.toString().toLong())
 //    editText.addTextChangedListener(model.decimalTextWatch)
 }
 
@@ -22,7 +24,7 @@ fun bindEditTextDec(editText: EditText, model : MainViewModel) {
 @BindingAdapter("addEditTextWatcherBin")
 fun bindEditTextBinary(editText: EditText, model : MainViewModel) {
     val string = editText.text.toString()
-    model.binaryTextWatch.setNumber(editText.text.toString().toLong(2))
+//    model.binaryTextWatch.setNumber(editText.text.toString().toLong(2))
 //    editText.addTextChangedListener(model.binaryTextWatch)
 }
 
@@ -64,4 +66,8 @@ fun bindSeekListner(seekBar: SeekBar, model : MainViewModel) {
 fun bindCheckListner(checkBox: CheckBox, model : MainViewModel) {
     print("focus")
     checkBox.setOnCheckedChangeListener(model.checkListner)
+    checkBox.isChecked = true
 }
+
+
+

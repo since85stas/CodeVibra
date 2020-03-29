@@ -7,7 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,11 +60,23 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
     var timerObj : Timer? = null
 
+    var isActiveFrag = false;
+
     companion object {
         fun newInstance() = MainFragment()
     }
 
     private lateinit var viewModel: MainViewModel
+
+    override fun onStart() {
+        super.onStart()
+        isActiveFrag = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isActiveFrag = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,7 +121,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
 
         // наблюдаем за включением вибрации
         viewModel.startV.observe(viewLifecycleOwner, Observer {
-            if (it == "STOP") {
+            if (it == "STOP" || it == "") {
 
             }
             else if (it !=  "NO") {
@@ -156,6 +171,9 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         }
         )
 
+        // подчеркиваем текс
+        link_text.hyperlinkStyle()
+
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -203,7 +221,7 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
                 override fun run() {
                     uiScope.launch {
 //                        stopVibrating()
-                        cancelVibrate()
+                        if (isActiveFrag) cancelVibrate()
                     }
                 }
             }
@@ -250,15 +268,15 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
      * создаем саунд пул для звуков
      */
     fun createSoundPool() {
-        val attributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
-        soundPool = SoundPool.Builder()
-            .setAudioAttributes(attributes)
-            .build()
-
-        soundId = soundPool!!.load(this.context!!,R.raw.drum1,1)
+//        val attributes = AudioAttributes.Builder()
+//            .setUsage(AudioAttributes.USAGE_GAME)
+//            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+//            .build()
+//        soundPool = SoundPool.Builder()
+//            .setAudioAttributes(attributes)
+//            .build()
+//
+//        soundId = soundPool!!.load(this.context!!,R.raw.drum1,1)
     }
 
     override fun onLoadComplete(soundPool: SoundPool?, sampleId: Int, status: Int) {
@@ -311,5 +329,19 @@ class MainFragment : Fragment(), SoundPool.OnLoadCompleteListener {
         text_view_binary.visibility = View.GONE
 
         viewModel.vibrateFinish()
+    }
+
+    fun TextView.hyperlinkStyle() {
+        setText(
+            SpannableString(text).apply {
+                setSpan(
+                    URLSpan(""),
+                    0,
+                    length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            },
+            TextView.BufferType.SPANNABLE
+        )
     }
 }

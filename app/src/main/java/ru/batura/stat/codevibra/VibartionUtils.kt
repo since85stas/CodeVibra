@@ -69,5 +69,8 @@ fun getGetTempValue(tempProgress : Int , longProgress : Int) : Int{
     val TEN : Double = 10.toDouble()
 
     val tPause : Long = ((0.125) * TEN.pow( 4 - xTemp)).toLong()
-    return 60000/tPause.toInt()
+    val ff : Float = 60000F ;
+    val res = Math.round(ff/tPause.toInt())
+    if (res == 241) return 240
+    else return res
 }
